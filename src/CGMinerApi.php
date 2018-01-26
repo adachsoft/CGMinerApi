@@ -4,6 +4,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+namespace AdachSoft\AntMiner;
 
 class CGMinerApi
 {
@@ -60,6 +61,11 @@ class CGMinerApi
 				echo "\r\n";
 			}
 		}
+	}
+
+	public function getResultSummary()
+	{
+		return $this->resultSummary;
 	}
 
 	public function sendSummary()
