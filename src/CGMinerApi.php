@@ -71,6 +71,7 @@ class CGMinerApi
 	public function sendSummary()
 	{
 		$this->resultSummary = $this->sendCommand('summary');
+		return $this->resultSummary;
 	}
 
 	public function sendCommand($cmd, $param = NULL)

@@ -55,6 +55,11 @@ class Monitor
 		$this->cgminer = new CGMinerApi($host);
 	}
 
+	public function IsDevicesAllowed($minerType)
+	{
+		return in_array($minerType, static::DEVICES_ALLOWED);
+	}
+
 	public function monitor()
 	{
 		while (true) {
@@ -75,36 +80,40 @@ class Monitor
 				$this->timeReboot = NULL;
 			}
 		} else {
-			$this->cgminer->sendSummary();
-			$resultSummary = $this->cgminer->getResultSummary();
-
-			if (isset($resultSummary['SUMMARY'][0])) {
-				$val = $resultSummary['SUMMARY'][0];
-
-				$hashRate = $val['GHS 5s'];
-				$hashRateAVG = $val['GHS av'];
-				$percent = 0;
-				if ($this->isNumber($hashRate) && $this->isNumber($hashRateAVG)) {
-					$hashRate = (float) $hashRate;
-					$percent = round(($hashRate / $this->hashRateReset) * 100.00, 2);
-					if ($percent < 90) {
-						$this->onLowHashRate($hashRate, $hashRateAVG, $percent);
-					}
-				} else {
-					echo "ERROR\r\n";
-				}
-
-				echo round($hashRate, 2) . "\t";
-				echo round($hashRateAVG, 2) . "\t";
-				echo round($percent, 2) . '%' . "\t";
-				echo "\r\n";
+			try {
+				$this->checkHashRate();
+			} catch (\Exception $e) {
+				echo "Error: " . $e->getMessage() . "\r\n";
 			}
 		}
 	}
 
-	public function IsDevicesAllowed($minerType)
+	private function checkHashRate()
 	{
-		return in_array($minerType, static::DEVICES_ALLOWED);
+		$resultSummary = $this->cgminer->sendSummary();
+		if (isset($resultSummary['SUMMARY'][0])) {
+			$val = $resultSummary['SUMMARY'][0];
+
+			$hashRate = $val['GHS 5s'];
+			$hashRateAVG = $val['GHS av'];
+			$percent = 0;
+			if ($this->isNumber($hashRate) && $this->isNumber($hashRateAVG)) {
+				$hashRate = (float) $hashRate;
+				$percent = round(($hashRate / $this->hashRateReset) * 100.00, 2);
+				if ($percent < 90) {
+					$this->onLowHashRate($hashRate, $hashRateAVG, $percent);
+				}
+			} else {
+				echo "ERROR\r\n";
+			}
+
+			echo round($hashRate, 2) . "\t";
+			echo round($hashRateAVG, 2) . "\t";
+			echo round($percent, 2) . '%' . "\t";
+			echo "\r\n";
+		} else {
+			echo "Error in summary\r\n";
+		}
 	}
 
 	private function onLowHashRate($hashRate, $hashRateAVG, $percent)
