@@ -13,8 +13,8 @@ class Monitor
 	const STATE_LOW_HASH_RATE = 1;
 	const STATE_REBOOTED = 2;
 	const HASH_RATE = [
-		'Antminer L3+' => 500,
-		'Antminer D3' => 18000
+		'Antminer L3+' => 504,
+		'Antminer D3' => 18700 * 1.2,
 	];
 	const DEVICES_ALLOWED = ['Antminer L3+', 'Antminer D3'];
 
@@ -69,8 +69,11 @@ class Monitor
 		echo $this->antminer->getMinerType() . ":\t";
 
 		if ($this->getState() === static::STATE_REBOOTED) {
-			$t = time() - $this->timeReboot;
+			$t = 60 - (time() - $this->timeReboot);
 			echo "Waiting($t)...";
+			if ($t === 0) {
+				$this->timeReboot = NULL;
+			}
 		} else {
 			$this->cgminer->sendSummary();
 			$resultSummary = $this->cgminer->getResultSummary();

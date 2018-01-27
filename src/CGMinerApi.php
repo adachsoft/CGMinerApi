@@ -99,11 +99,10 @@ class CGMinerApi
 		$res = json_decode($response, true);
 		if (is_null($res)) {
 			var_dump($response);
-			echo "ERROR: " . json_last_error_msg() . "\r\n";
-			return false;
+			$message = json_last_error_msg();
+			echo "ERROR: " . $message . "\r\n";
+			throw new Exception($message);
 		}
-		//echo "\r\n$response\r\n";
-		//var_dump($res);
 
 		fclose($this->socket);
 		return $res;
