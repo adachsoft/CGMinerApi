@@ -11,10 +11,11 @@ class Monitor
 
 	const HASH_RATE = [
 		'Antminer L3+' => 500,
+		'Antminer D3' => 18000
 	];
-	const DEVICES_ALLOWED = ['Antminer L3+'];
+	const DEVICES_ALLOWED = ['Antminer L3+', 'Antminer D3'];
 
-	public $hashRateReset = [];
+	public $hashRateReset = false;
 
 	/**
 	 * Server host.
@@ -40,6 +41,8 @@ class Monitor
 			echo 'CGminer version: ' . $this->antminer->getCGminerVersion() . "\r\n";
 			if (!$this->IsDevicesAllowed($this->antminer->getMinerType())) {
 				echo "Unknown device\r\n";
+			} else {
+				$this->hashRateReset = static::HASH_RATE[$this->antminer->getMinerType()];
 			}
 		} else {
 			echo "NOT OK\r\n";
