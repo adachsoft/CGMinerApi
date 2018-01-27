@@ -79,7 +79,7 @@ class CGMinerApi
 		$this->socket = fsockopen($this->host, $this->port, $errno, $errstr, 30);
 		if (!$this->socket) {
 			$message = 'Connection to "' . $this->host . ':' . $this->port . '" failed (errno ' . $errno . '): ' . $errstr;
-			throw new Exception($message, $errno);
+			throw new\Exception($message, $errno);
 		}
 
 		$arr['command'] = $cmd;
@@ -102,7 +102,7 @@ class CGMinerApi
 			var_dump($response);
 			$message = json_last_error_msg();
 			echo "ERROR: " . $message . "\r\n";
-			throw new Exception($message);
+			throw new\Exception($message);
 		}
 
 		fclose($this->socket);
