@@ -31,6 +31,7 @@ class Monitor
 	protected $cgminer;
 	protected $timeLowHashRate;
 	protected $timeReboot;
+	protected $failedLogin;
 
 	public function __construct($host, $username, $password)
 	{
@@ -38,8 +39,11 @@ class Monitor
 		$this->username = $username;
 		$this->password = $password;
 
+		echo "VERSION: " . $this->getVersion() . "\r\n";
+
 		$this->antminer = new AntMinerWWW($host, $username, $password);
 		if ($this->antminer->index()) {
+			$this->failedLogin = true;
 			echo "OK\r\n";
 			echo 'Miner type: ' . $this->antminer->getMinerType() . "\r\n";
 			echo 'Mac addr: ' . $this->antminer->getMac() . "\r\n";
@@ -50,9 +54,15 @@ class Monitor
 				$this->hashRateReset = static::HASH_RATE[$this->antminer->getMinerType()];
 			}
 		} else {
+			$this->failedLogin = false;
 			echo "NOT OK\r\n";
 		}
 		$this->cgminer = new CGMinerApi($host);
+	}
+
+	public function getVersion()
+	{
+		return 0.1;
 	}
 
 	public function IsDevicesAllowed($minerType)
@@ -70,6 +80,10 @@ class Monitor
 
 	public function check()
 	{
+		if ($this->failedLogin !== true) {
+			echo "Failed login\r\n";
+		}
+
 		echo "Addr: " . $this->host . "\r\n";
 		echo $this->antminer->getMinerType() . ":\t";
 
