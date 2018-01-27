@@ -69,7 +69,7 @@ class Monitor
 		echo $this->antminer->getMinerType() . ":\t";
 
 		if ($this->getState() === static::STATE_REBOOTED) {
-			$t = 60 - (time() - $this->timeReboot);
+			$t = 90 - (time() - $this->timeReboot);
 			echo "Waiting($t)...";
 			if ($t === 0) {
 				$this->timeReboot = NULL;
@@ -115,6 +115,7 @@ class Monitor
 		} elseif (time() - $this->timeLowHashRate > 60) {
 			$this->timeLowHashRate = NULL;
 			$this->timeReboot = time();
+			$this->antminer->rebootCGI();
 			echo "REBOOT\r\n";
 		}
 	}
