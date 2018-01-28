@@ -31,6 +31,7 @@ class Monitor
 	protected $cgminer;
 	protected $timeLowHashRate;
 	protected $timeReboot;
+	protected $lastTimeReboot;
 	protected $failedLogin;
 
 	public function __construct($host, $username, $password)
@@ -62,7 +63,7 @@ class Monitor
 
 	public function getVersion()
 	{
-		return 0.1;
+		return 0.2;
 	}
 
 	public function IsDevicesAllowed($minerType)
@@ -138,6 +139,7 @@ class Monitor
 		} elseif (time() - $this->timeLowHashRate > 60) {
 			$this->timeLowHashRate = NULL;
 			$this->timeReboot = time();
+			$this->lastTimeReboot = time();
 			$this->antminer->rebootCGI();
 			echo "REBOOT\r\n";
 		}
