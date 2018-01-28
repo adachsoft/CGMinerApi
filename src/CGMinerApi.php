@@ -76,10 +76,10 @@ class CGMinerApi
 
 	public function sendCommand($cmd, $param = NULL)
 	{
-		$this->socket = fsockopen($this->host, $this->port, $errno, $errstr, 30);
-		if (!$this->socket) {
-			$message = 'Connection to "' . $this->host . ':' . $this->port . '" failed (errno ' . $errno . '): ' . $errstr;
-			throw new\Exception($message, $errno);
+		$this->socket = @fsockopen($this->host, $this->port, $error, $errstr, 30);
+		if (!is_resource($this->socket)) {
+			$message = 'Connection to "' . $this->host . ':' . $this->port . '" failed (error ' . $error . '): ' . $errstr;
+			throw new\Exception($message, $error);
 		}
 
 		$arr['command'] = $cmd;

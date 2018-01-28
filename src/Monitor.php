@@ -32,6 +32,7 @@ class Monitor
 	protected $timeLowHashRate;
 	protected $timeReboot;
 	protected $lastTimeReboot;
+	protected $numberOfReboot;
 	protected $failedLogin;
 
 	public function __construct($host, $username, $password)
@@ -63,7 +64,7 @@ class Monitor
 
 	public function getVersion()
 	{
-		return 0.2;
+		return 0.4;
 	}
 
 	public function IsDevicesAllowed($minerType)
@@ -83,6 +84,7 @@ class Monitor
 	{
 		if ($this->failedLogin !== true) {
 			echo "Failed login\r\n";
+			return;
 		}
 
 		echo "Addr: " . $this->host . "\r\n";
@@ -98,7 +100,7 @@ class Monitor
 			try {
 				$this->checkHashRate();
 			} catch (\Exception $e) {
-				echo "Error: " . $e->getMessage() . "\r\n";
+				echo "Error connect\r\n";
 			}
 		}
 	}
@@ -119,7 +121,7 @@ class Monitor
 					$this->onLowHashRate($hashRate, $hashRateAVG, $percent);
 				}
 			} else {
-				echo "ERROR\r\n";
+				echo "ERROR: not a number\r\n";
 			}
 
 			echo round($hashRate, 2) . "\t";
@@ -137,12 +139,28 @@ class Monitor
 		if (empty($this->timeLowHashRate)) {
 			$this->timeLowHashRate = time();
 		} elseif (time() - $this->timeLowHashRate > 60) {
-			$this->timeLowHashRate = NULL;
-			$this->timeReboot = time();
-			$this->lastTimeReboot = time();
-			$this->antminer->rebootCGI();
-			echo "REBOOT\r\n";
+			$this->reboot();
 		}
+	}
+
+	private function reboot()
+	{
+		if (!$this->IsRebootAvailable()) {
+			echo "Reboot unavailable\r\n";
+			return;
+		}
+
+		$this->timeLowHashRate = NULL;
+		$this->timeReboot = time();
+		$this->lastTimeReboot = time();
+		$this->numberOfReboot++;
+		$this->antminer->rebootCGI();
+		echo "REBOOT\r\n";
+	}
+
+	private function IsRebootAvailable()
+	{
+		return is_null($this->lastTimeReboot) || time() - $this->lastTimeReboot > 60 * 15;
 	}
 
 	/**
