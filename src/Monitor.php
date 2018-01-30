@@ -24,16 +24,16 @@ class Monitor
 	 * Server host.
 	 * @var string
 	 */
-	protected $host;
-	protected $username;
-	protected $password;
-	protected $antminer;
-	protected $cgminer;
-	protected $timeLowHashRate;
-	protected $timeReboot;
-	protected $lastTimeReboot;
-	protected $numberOfReboot;
-	protected $failedLogin;
+	private $host;
+	private $username;
+	private $password;
+	private $antminer;
+	private $cgminer;
+	private $timeLowHashRate;
+	private $timeReboot;
+	private $lastTimeReboot;
+	private $numberOfReboot;
+	private $failedLogin;
 
 	public function __construct($host, $username, $password)
 	{
