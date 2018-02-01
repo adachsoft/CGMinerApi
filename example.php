@@ -6,8 +6,8 @@ if ($argc == 1) {
 } else {
 	echo "IP: " . $argv[1] . "\r\n";
 	$cgminer = new \AdachSoft\AntMiner\CGMinerApi($argv[1]);
-	$cgminer->sendSummary();
-	$cgminer->printSummary();
+	$cgminer->sendStats();
+	$cgminer->printStats();
 }
 
 

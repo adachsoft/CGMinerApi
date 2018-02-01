@@ -28,6 +28,7 @@ class CGMinerApi
 	protected $socket;
 	protected $resultSummary;
 	protected $resultPools;
+	protected $resultStats;
 
 	public function __construct($host, $port = 4028)
 	{
@@ -74,6 +75,38 @@ class CGMinerApi
 		return $this->resultSummary;
 	}
 
+	public function sendStats()
+	{
+		$this->resultStats = $this->sendCommand('stats');
+		return $this->resultStats;
+	}
+
+	public function printStats()
+	{
+		if (isset($this->resultStats['STATS'][1])) {
+			$stats = $this->resultStats['STATS'][1];
+			echo "Hashrate: ";
+			echo $stats['GHS 5s'] . "\t";
+			echo $stats['GHS av'] . "\t";
+			echo "\r\n";
+			$fans = [];
+			$tempPCB = [];
+			$tempChip = [];
+			foreach ($stats as $key => $val) {
+				if (preg_match('/^fan[0-9]/i', $key)) {
+					$fans[$key] = $val;
+				} elseif (preg_match('/^temp[0-9]$/i', $key)) {
+					$tempPCB[$key] = $val;
+				} elseif (preg_match('/^temp2_([0-9])$/i', $key, $m)) {
+					$tempChip[$key] = $val;
+				}
+			}
+			$this->printArray('fan', $fans);
+			$this->printArray('tempPCB', $tempPCB);
+			$this->printArray('tempChip', $tempChip);
+		}
+	}
+
 	public function sendCommand($cmd, $param = NULL)
 	{
 		$this->socket = @fsockopen($this->host, $this->port, $error, $errstr, 30);
@@ -99,13 +132,39 @@ class CGMinerApi
 
 		$res = json_decode($response, true);
 		if (is_null($res)) {
-			var_dump($response);
-			$message = json_last_error_msg();
-			echo "ERROR: " . $message . "\r\n";
-			throw new\Exception($message);
+			if (strpos($response, '"}{"')) {
+				$response = str_replace('"}{"', '"},{"', $response);
+				$res = json_decode($response, true);
+				if (is_null($res)) {
+					var_dump($response);
+					$message = json_last_error_msg();
+					echo "ERROR: " . $message . "\r\n";
+					throw new\Exception($message);
+				}
+			} else {
+				var_dump($response);
+				$message = json_last_error_msg();
+				echo "ERROR: " . $message . "\r\n";
+				throw new\Exception($message);
+			}
 		}
 
 		fclose($this->socket);
 		return $res;
+	}
+
+	private function printArray($name, $arr, $sep = "\t")
+	{
+		$i = 1;
+		$cnt = count($arr);
+		echo "$name: ";
+		foreach ($arr as $key => $val) {
+			echo $val;
+			if ($i < $cnt) {
+				echo $sep;
+			}
+			$i++;
+		}
+		echo "\r\n";
 	}
 }
