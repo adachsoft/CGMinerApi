@@ -14,7 +14,7 @@ class Monitor
 	const STATE_REBOOTED = 2;
 	const HASH_RATE = [
 		'Antminer L3+' => 504,
-		'Antminer D3' => 18700 * 1.2,
+		'Antminer D3' => 18700,
 	];
 	const DEVICES_ALLOWED = ['Antminer L3+', 'Antminer D3'];
 

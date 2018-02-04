@@ -89,16 +89,21 @@ class CGMinerApi
 			echo $stats['GHS 5s'] . "\t";
 			echo $stats['GHS av'] . "\t";
 			echo "\r\n";
+			$tempNum = $stats['temp_num'];
+			$numPCB = 0;
+			$numChip = 0;
 			$fans = [];
 			$tempPCB = [];
 			$tempChip = [];
 			foreach ($stats as $key => $val) {
 				if (preg_match('/^fan[0-9]/i', $key)) {
 					$fans[$key] = $val;
-				} elseif (preg_match('/^temp[0-9]$/i', $key)) {
+				} elseif (preg_match('/^temp[0-9]$/i', $key) && $numPCB < $tempNum) {
 					$tempPCB[$key] = $val;
-				} elseif (preg_match('/^temp2_([0-9])$/i', $key, $m)) {
+					$numPCB++;
+				} elseif (preg_match('/^temp2_([0-9])$/i', $key, $m) && $numChip < $tempNum) {
 					$tempChip[$key] = $val;
+					$numChip++;
 				}
 			}
 			$this->printArray('fan', $fans);
