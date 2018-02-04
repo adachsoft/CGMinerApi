@@ -1,0 +1,10 @@
+{
+    "name": "arek/cg-miner-api",
+    "authors": [
+        {
+            "name": "Arkadiusz Adach",
+            "email": "adach_soft@wp4b.pl"
+        }
+    ],
+    "require": {}
+}
