@@ -64,7 +64,7 @@ class Monitor
 
 	public function getVersion()
 	{
-		return 0.4;
+		return 0.5;
 	}
 
 	public function IsDevicesAllowed($minerType)
@@ -93,7 +93,7 @@ class Monitor
 		if ($this->getState() === static::STATE_REBOOTED) {
 			$t = 90 - (time() - $this->timeReboot);
 			echo "Waiting($t)...";
-			if ($t === 0) {
+			if ($t <= 0) {
 				$this->timeReboot = NULL;
 			}
 		} else {
@@ -171,7 +171,7 @@ class Monitor
 	{
 		if (!empty($this->timeReboot)) {
 			return static::STATE_REBOOTED;
-		} elseif (!empty($this->timeReboot)) {
+		} elseif (!empty($this->timeLowHashRate)) {
 			return static::STATE_LOW_HASH_RATE;
 		}
 		return static::STATE_OK;
