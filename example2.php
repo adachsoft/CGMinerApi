@@ -2,14 +2,8 @@
 require_once './src/CGMinerApi.php';
 require_once './src/AntMinerWWW.php';
 require_once './src/Monitor.php';
+require_once 'config.php';
 
-$config = [
-	[
-		'host' => '',
-		'username' => '',
-		'password' => ''
-	]
-];
 $monitors = [];
 
 foreach ($config as $val) {

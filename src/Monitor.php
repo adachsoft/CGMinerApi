@@ -65,7 +65,7 @@ class Monitor
 
 	public function getVersion()
 	{
-		return 0.5;
+		return 0.6;
 	}
 
 	public function IsDevicesAllowed($minerType)
@@ -143,9 +143,16 @@ class Monitor
 		} elseif (time() - $this->timeLowHashRate <= 60) {
                     $this->hashRateArray[] = $hashRate;
                 }elseif (time() - $this->timeLowHashRate > 60) {
-                        $average = array_sum($this->hashRateArray) / count($this->hashRateArray);
+                        $average = (float)array_sum($this->hashRateArray) / count($this->hashRateArray);
+			$percent = round(($average / $this->hashRateReset) * 100.00, 2);
                         echo "average: $average\r\n";
-			//$this->reboot();
+                        echo "percent: $percent\r\n";
+                        if( $percent < 90 ){
+                            //$this->reboot();
+                            echo "REBOOT";
+                        }else{
+                            $this->timeLowHashRate = NULL;
+                        }
 		}
 	}
 
