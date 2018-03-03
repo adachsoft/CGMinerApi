@@ -145,11 +145,8 @@ class Monitor
                 }elseif (time() - $this->timeLowHashRate > 60) {
                         $average = (float)array_sum($this->hashRateArray) / count($this->hashRateArray);
 			$percent = round(($average / $this->hashRateReset) * 100.00, 2);
-                        echo "average: $average\r\n";
-                        echo "percent: $percent\r\n";
                         if( $percent < 90 ){
-                            //$this->reboot();
-                            echo "REBOOT";
+                            $this->reboot();
                         }else{
                             $this->timeLowHashRate = NULL;
                         }
