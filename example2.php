@@ -1,4 +1,8 @@
 <?php
+require_once './src/CGMinerApi.php';
+require_once './src/AntMinerWWW.php';
+require_once './src/Monitor.php';
+
 $config = [
 	[
 		'host' => '',
@@ -12,9 +16,12 @@ foreach ($config as $val) {
 	$monitors[] = new \AdachSoft\AntMiner\Monitor($val['host'], $val['username'], $val['password']);
 }
 
-foreach ($monitors as $monitor) {
+while(1){
+    foreach ($monitors as $monitor) {
 	$monitor->check();
 	echo "----------------------\r\n";
 	echo "\r\n";
 	sleep(1);
+    }
 }
+
