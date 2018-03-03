@@ -147,7 +147,7 @@ class CGMinerApi
 					throw new\Exception($message);
 				}
 			} else {
-				var_dump($response);
+				//var_dump($response);
 				$message = json_last_error_msg();
 				echo "ERROR: " . $message . "\r\n";
 				throw new\Exception($message);

@@ -113,13 +113,11 @@ class AntMinerWWW
 			echo "-------------------\r\n";
 			var_dump($output);
 			var_dump($info);
-
 			return false;
 		}
 
 		var_dump($output);
 		var_dump($info);
-
 		return true;
 	}
 

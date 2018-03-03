@@ -34,6 +34,7 @@ class Monitor
 	private $lastTimeReboot;
 	private $numberOfReboot;
 	private $failedLogin;
+        private $hashRateArray;
 
 	public function __construct($host, $username, $password)
 	{
@@ -138,8 +139,13 @@ class Monitor
 		echo "Low hash rate\r\n";
 		if (empty($this->timeLowHashRate)) {
 			$this->timeLowHashRate = time();
-		} elseif (time() - $this->timeLowHashRate > 60) {
-			$this->reboot();
+                        $this->hashRateArray = [$hashRate];
+		} elseif (time() - $this->timeLowHashRate <= 60) {
+                    $this->hashRateArray[] = $hashRate;
+                }elseif (time() - $this->timeLowHashRate > 60) {
+                        $average = array_sum($this->hashRateArray) / count($this->hashRateArray);
+                        echo "average: $average\r\n";
+			//$this->reboot();
 		}
 	}
 
